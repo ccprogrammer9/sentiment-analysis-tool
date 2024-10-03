@@ -4,7 +4,7 @@ from sklearn.naive_bayes import MultinomialNB
 import joblib
 
 # Load training data from CSV
-data = pd.read_csv('sample_data.csv')
+data = pd.read_csv('train_travel_data.csv')
 
 # Assuming the CSV has two columns: 'text' and 'label'
 # Adjust the column names as necessary
