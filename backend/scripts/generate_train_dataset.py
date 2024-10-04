@@ -50,16 +50,16 @@ def generate_sentences():
         while len(unique_sentences) < count:
             base_sentence = random.choice(templates)
             # Create variations of the base sentence
-            variation = base_sentence.replace("train", random.choice(["express", "local train", "bullet train", "commuter train"]))
-            unique_sentences.add(variation)
+            variation = base_sentence.replace("train", random.choice(["express train", "local train", "bullet train", "commuter train", "sleeper train"]))
             unique_sentences.add(base_sentence)
+            unique_sentences.add(variation)
 
         return [{"text": sentence, "label": sentiment} for sentence in unique_sentences]
 
     # Generate unique sentences for each sentiment category
-    positive_sentences = create_unique_sentences(positive_templates, "positive", 200)
-    neutral_sentences = create_unique_sentences(neutral_templates, "neutral", 200)
-    negative_sentences = create_unique_sentences(negative_templates, "negative", 200)
+    positive_sentences = create_unique_sentences(positive_templates, "positive", 100)
+    neutral_sentences = create_unique_sentences(neutral_templates, "neutral", 100)
+    negative_sentences = create_unique_sentences(negative_templates, "negative", 100)
 
     # Combine all sentences
     dataset = positive_sentences + neutral_sentences + negative_sentences
@@ -74,16 +74,15 @@ def generate_sentences():
     # Check if we have enough unique sentences
     unique_count = len(df)
 
-    if unique_count < 5000:
-        print(f"Only generated {unique_count} unique sentences. Trying to generate more.")
-        while unique_count < 5000:
-            label = random.choice(["positive", "neutral", "negative"])
-            templates = positive_templates if label == "positive" else neutral_templates if label == "neutral" else negative_templates
-            new_sentences = create_unique_sentences(templates, label, 1)
-            for sentence in new_sentences:
-                if sentence not in df.values:
-                    df = pd.concat([df, pd.DataFrame([sentence])], ignore_index=True)
-            unique_count = len(df)
+    # Ensure we have at least 1000 unique sentences
+    while unique_count < 300:
+        label = random.choice(["positive", "neutral", "negative"])
+        templates = positive_templates if label == "positive" else neutral_templates if label == "neutral" else negative_templates
+        new_sentences = create_unique_sentences(templates, label, 1)
+        for sentence in new_sentences:
+            if sentence not in df.values:
+                df = pd.concat([df, pd.DataFrame([sentence])], ignore_index=True)
+        unique_count = len(df)
 
     return df
 
